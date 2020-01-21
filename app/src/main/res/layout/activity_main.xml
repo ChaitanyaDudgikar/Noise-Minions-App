@@ -10,11 +10,25 @@
 
     <Button
         android:id="@+id/start"
-        android:layout_width="114dp"
-        android:layout_height="45dp"
-        android:layout_marginBottom="100dp"
+        android:layout_width="107dp"
+        android:layout_height="47dp"
+        android:layout_marginBottom="128dp"
         android:background="#FF9800"
         android:text="@string/start"
+        android:textColor="#EEF5EF"
+        android:textSize="25dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/stop"
+        android:layout_width="109dp"
+        android:layout_height="46dp"
+        android:layout_marginBottom="56dp"
+        android:background="#FF9800"
+        android:text="stop"
         android:textColor="#EEF5EF"
         android:textSize="25dp"
         app:layout_constraintBottom_toBottomOf="parent"

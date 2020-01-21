@@ -38,8 +38,9 @@ public class Main2Activity extends AppCompatActivity
     //ByteArrayOutputStream baos;
     Handler handler = new Handler();
     ShortBuffer shortBuffer;
+    
     public double Lat, Long;
-
+    Location location;
     class MyLocationListener implements LocationListener
     {
 
@@ -72,6 +73,7 @@ public class Main2Activity extends AppCompatActivity
         {
             Log.i("onProviderDisabled:", "Do something with the provider-> " + provider);
         }
+
     }
 
 
@@ -87,7 +89,7 @@ public class Main2Activity extends AppCompatActivity
         LocationManager lm = (LocationManager) getSystemService(LOCATION_SERVICE);
         try
         {
-            lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 60000, 5000, ml);
+            lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 60000, 100, ml);
         } catch (SecurityException se)
         {
             System.err.println("Location access not permitted");

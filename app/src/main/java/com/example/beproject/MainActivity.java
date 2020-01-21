@@ -26,11 +26,12 @@ import android.widget.Toast;
 import java.util.ArrayList;
 
 
-public class MainActivity extends AppCompatActivity {
-    Button b;
+public class MainActivity extends AppCompatActivity
+{
+    Button b1,b2;
 
 
-//    String[] appPermissions = {
+    //    String[] appPermissions = {
 //            Manifest.permission.WRITE_EXTERNAL_STORAGE,
 //            Manifest.permission.ACCESS_FINE_LOCATION
 //    };
@@ -38,17 +39,33 @@ public class MainActivity extends AppCompatActivity {
 //    private static final int PERMISSION_REQUEST_CODE=1240;
 //
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         int Permission_All = 1;
 
-        String[] Permissions = {Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.RECORD_AUDIO, Manifest.permission.ACCESS_NETWORK_STATE,Manifest.permission.INTERNET,Manifest.permission.WRITE_EXTERNAL_STORAGE};
-        if(!hasPermissions(this, Permissions))
-       {
+        String[] Permissions = {Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.RECORD_AUDIO, Manifest.permission.ACCESS_NETWORK_STATE, Manifest.permission.INTERNET, Manifest.permission.WRITE_EXTERNAL_STORAGE};
+        if (!hasPermissions(this, Permissions))
+        {
             ActivityCompat.requestPermissions(this, Permissions, Permission_All);
             GpsUtils gu = new GpsUtils(this);
-            Log.d("GPS","Turning GPS ON");
+            Log.d("GPS", "Turning GPS ON");
+            gu.turnGPSOn(new GpsUtils.onGpsListener()
+            {
+                @Override
+                public void gpsStatus(boolean isGPSEnable)
+                {
+                    Log.d("GPS", "GPS Enabled:" + isGPSEnable);
+                }
+
+
+            });
+        } else
+        {
+            ActivityCompat.requestPermissions(this, Permissions, Permission_All);
+            GpsUtils gu = new GpsUtils(this);
+            Log.d("GPS", "Turning GPS ON");
             gu.turnGPSOn(new GpsUtils.onGpsListener()
             {
                 @Override
@@ -60,23 +77,8 @@ public class MainActivity extends AppCompatActivity {
 
             });
         }
-        else
-            {
-                ActivityCompat.requestPermissions(this, Permissions, Permission_All);
-                GpsUtils gu = new GpsUtils(this);
-                Log.d("GPS","Turning GPS ON");
-                gu.turnGPSOn(new GpsUtils.onGpsListener()
-                {
-                    @Override
-                    public void gpsStatus(boolean isGPSEnable)
-                    {
-                        Log.d("GPS", "GPS Enabled:" + isGPSEnable);
-                    }
 
-
-                });
-            }
- //        Intent serviceIntent = new Intent(getApplicationContext(), MyService.class);
+//        Intent serviceIntent = new Intent(getApplicationContext(), MyService.class);
 //        startService(serviceIntent);
 
 //        if(checkAndRequestPermission())
@@ -85,17 +87,18 @@ public class MainActivity extends AppCompatActivity {
 //
 //        }
 
-        b=findViewById(R.id.start);
-        b.setOnClickListener(new View.OnClickListener() {
+        b1 = findViewById(R.id.start);
+        b1.setOnClickListener(new View.OnClickListener()
+        {
             @Override
-            public void onClick(View v) {
+            public void onClick(View v)
+            {
 
                 Intent serviceIntent = new Intent(getApplicationContext(), MyService.class);
                 startService(serviceIntent);
 
 
-
-                Intent i=new Intent(getApplicationContext(),Main2Activity.class);
+                Intent i = new Intent(getApplicationContext(), MapsActivity.class);
                 startActivity(i);
 
 
@@ -103,14 +106,28 @@ public class MainActivity extends AppCompatActivity {
                 // startActivity(m);
             }
         });
-
+        b2= findViewById(R.id.stop);
+        b2.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View view)
+            {
+                Intent serviceIntent = new Intent(getApplicationContext(), MyService.class);
+                stopService(serviceIntent);
+            }
+        });
     }
-    public static boolean hasPermissions(Context context, String... permissions){
 
-        if(Build.VERSION.SDK_INT>= Build.VERSION_CODES.M && context!=null && permissions!=null){
-            for(String permission: permissions){
-                if(ActivityCompat.checkSelfPermission(context, permission)!=PackageManager.PERMISSION_GRANTED){
-                    return  false;
+    public static boolean hasPermissions(Context context, String... permissions)
+    {
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && context != null && permissions != null)
+        {
+            for (String permission : permissions)
+            {
+                if (ActivityCompat.checkSelfPermission(context, permission) != PackageManager.PERMISSION_GRANTED)
+                {
+                    return false;
                 }
             }
         }

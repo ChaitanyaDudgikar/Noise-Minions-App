@@ -44,5 +44,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         LatLng solapur = new LatLng(17.677353, 75.908675);
         mMap.addMarker(new MarkerOptions().position(solapur).title("Marker in Solapur"));
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(solapur, zoomLevel));
+
+
     }
 }

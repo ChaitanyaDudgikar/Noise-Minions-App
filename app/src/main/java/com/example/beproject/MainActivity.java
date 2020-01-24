@@ -28,7 +28,7 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity
 {
-    Button b1,b2;
+    Button b1, b2;
 
 
     //    String[] appPermissions = {
@@ -106,7 +106,7 @@ public class MainActivity extends AppCompatActivity
                 // startActivity(m);
             }
         });
-        b2= findViewById(R.id.stop);
+        b2 = findViewById(R.id.stop);
         b2.setOnClickListener(new View.OnClickListener()
         {
             @Override

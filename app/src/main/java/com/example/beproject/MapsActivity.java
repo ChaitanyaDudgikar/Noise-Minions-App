@@ -1,24 +1,39 @@
 package com.example.beproject;
 
 import android.os.Bundle;
+import android.text.method.LinkMovementMethod;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.TileOverlay;
+import com.google.android.gms.maps.model.TileOverlayOptions;
+import com.google.maps.android.heatmaps.HeatmapTileProvider;
+import com.google.maps.android.heatmaps.WeightedLatLng;
 
 import androidx.fragment.app.FragmentActivity;
 
+import java.sql.Array;
+import java.util.ArrayList;
+import java.util.List;
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
+
+public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
+{
 
     private GoogleMap mMap;
+    private HeatmapTileProvider mProvider;
+    private List<WeightedLatLng> heatmapPoints = new ArrayList<>();
+    private TileOverlay mOverlay;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
@@ -37,7 +52,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
      * installed Google Play services and returned to the app.
      */
     @Override
-    public void onMapReady(GoogleMap googleMap) {
+    public void onMapReady(final GoogleMap googleMap)
+    {
         mMap = googleMap;
         float zoomLevel = (float) 12.5;
         // Add a marker in Sydney and move the camera
@@ -45,6 +61,32 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.addMarker(new MarkerOptions().position(solapur).title("Marker in Solapur"));
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(solapur, zoomLevel));
 
+        googleMap.setOnCameraMoveListener(new GoogleMap.OnCameraMoveListener()
+        {
+            @Override
+            public void onCameraMove()
+            {
+                LatLng sw = googleMap.getProjection().getVisibleRegion().latLngBounds.southwest;
+                LatLng ne = googleMap.getProjection().getVisibleRegion().latLngBounds.northeast;
+
+                List<LatLng> noiseList = new ArrayList<>();
+                //
+
+
+                if (mProvider == null)
+                {
+                    mProvider = new HeatmapTileProvider.Builder().data(noiseList).build();
+                    mOverlay = googleMap.addTileOverlay(new TileOverlayOptions().tileProvider(mProvider));
+                    // Render links
+//            attribution.setMovementMethod(LinkMovementMethod.getInstance());
+                } else
+                {
+                    mProvider.setData(noiseList);
+                    mOverlay.clearTileCache();
+                }
+
+            }
+        });
 
     }
 }

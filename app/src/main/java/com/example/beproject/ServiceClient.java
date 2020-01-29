@@ -11,7 +11,7 @@ import java.net.URL;
 
 public class ServiceClient
 {
-    private static final String BASE_URL="http://13.58.40.245:8084/noiseservice";
+    private static final String BASE_URL="http://13.58.40.245:8084";
     public static String uploadData(String deviceid, double longitude, double latitude, double noiselevel)
     {
         try

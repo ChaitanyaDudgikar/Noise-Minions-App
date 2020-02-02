@@ -42,6 +42,7 @@ public class MyService extends Service
     Boolean isRecorderStart = null;
     ShortBuffer shortBuffer;
     public double Lat, Long;
+    int callibval=0;
     Handler handler = new Handler();
     private MyLocationListener ml;
 
@@ -236,26 +237,59 @@ public class MyService extends Service
                 @Override
                 public void run()
                 {
-                    Toast.makeText(getApplicationContext(), "stop recording" + " AVG=" + finalMax + " dB=" + db2, Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), "stop recording" + " AVG=" + finalMax + " dB=" + (db2-callibval), Toast.LENGTH_LONG).show();
                 }
             });
 //                Toast.makeText(getApplicationContext(), "stop recording", Toast.LENGTH_SHORT).show();
-            System.out.println("Uploading data");
+//            System.out.println("Uploading data");
             final String UID = "Unique_User_id";
             SharedPreferences prefs = getSharedPreferences(UID, MODE_PRIVATE);
             String deviceid = prefs.getString("UID", null);
+            float basedb = prefs.getFloat("basedb", 0);
+            SharedPreferences.Editor editor = prefs.edit();
+            Log.d("Log", "basedb" + basedb);
             if (deviceid == null)
             {
                 String uuid = UUID.randomUUID().toString().replace("-", "");
-                SharedPreferences.Editor editor = prefs.edit();
+                editor = prefs.edit();
                 editor.putString("UID", uuid);
                 editor.apply();
                 deviceid = uuid;
             }
-            Log.d("Log", "Uploading data " + deviceid + ", " + Long + ", " + Lat + ", " + db2);
-            if (Lat != 0 && Long != 0)
+            Log.d("Log", "Uploading data " + deviceid + ", " + Long + ", " + Lat + ", " + db2 + ":" + (db2 -basedb));
+            if (((NoiseMinionApplication) getApplication()).isCalibratinglow)
             {
-                ServiceClient.uploadData(deviceid, Long, Lat, db2);
+
+                callibval=35;
+                editor.putFloat("basedb", (float) db2-callibval);
+                editor.apply();
+                Log.d("Log", "basedb" + (db2-callibval));
+                //Log.d("Log", "Uploading data " + deviceid + ", " + Long + ", " + Lat + ", " + db2 + ":" + (db2 -basedb));
+                ((NoiseMinionApplication) getApplication()).isCalibratinglow = false;
+            }
+            if (((NoiseMinionApplication) getApplication()).isCalibratingmedium)
+            {
+
+                callibval=55;
+                editor.putFloat("basedb", (float) db2-callibval);
+                editor.apply();
+                Log.d("Log", "basedb" + (db2-callibval));
+                //Log.d("Log", "Uploading data " + deviceid + ", " + Long + ", " + Lat + ", " + db2 + ":" + (db2 - basedb));
+                ((NoiseMinionApplication) getApplication()).isCalibratingmedium = false;
+            }
+            if (((NoiseMinionApplication) getApplication()).isCalibratinghigh)
+            {
+
+                callibval=70;
+                editor.putFloat("basedb", (float) db2-callibval);
+                editor.apply();
+                Log.d("Log", "basedb" + (db2-callibval));
+                //Log.d("Log", "Uploading data " + deviceid + ", " + Long + ", " + Lat + ", " + db2 + ":" + (db2 - basedb));
+                ((NoiseMinionApplication) getApplication()).isCalibratinghigh = false;
+            }
+            else if (Lat != 0 && Long != 0)
+            {
+                ServiceClient.uploadData(deviceid, Long, Lat, db2 - basedb);
                 System.out.println("Data uploaded");
             }
         }
@@ -275,25 +309,35 @@ public class MyService extends Service
     {
         super.onCreate();
 
+        boolean isCalibratinglow = ((NoiseMinionApplication) getApplication()).isCalibratinglow;
+        boolean isCalibratingmedium = ((NoiseMinionApplication) getApplication()).isCalibratingmedium;
+        boolean isCalibratinghigh = ((NoiseMinionApplication) getApplication()).isCalibratinghigh;
+
         Log.d("Log", "MyService.onCreate()");
 
-        if (mTimer != null) // Cancel if already existed
-            mTimer.cancel();
-        else
-            mTimer = new Timer();   //recreate new
-
-        mTimer.scheduleAtFixedRate(new TimeDisplay(), 0_000, 15_000);   //Schedule task
-
-        ml = new MyLocationListener();
-        final LocationManager lm = (LocationManager) getSystemService(LOCATION_SERVICE);
-
-        try
+        if (!isCalibratinglow || !isCalibratingmedium || !isCalibratinghigh )
         {
-            lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 60000, 100, ml);
-        } catch (SecurityException se)
+            if (mTimer != null) // Cancel if already existed
+                mTimer.cancel();
+            else
+                mTimer = new Timer();   //recreate new
+
+            mTimer.scheduleAtFixedRate(new TimeDisplay(), 0_000, 15_000);   //Schedule task
+
+            ml = new MyLocationListener();
+            final LocationManager lm = (LocationManager) getSystemService(LOCATION_SERVICE);
+
+            try
+            {
+                lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 60000, 100, ml);
+            } catch (SecurityException se)
+            {
+                System.err.println("Location access not permitted");
+                se.printStackTrace();
+            }
+        } else
         {
-            System.err.println("Location access not permitted");
-            se.printStackTrace();
+            new Thread(new TimeDisplay()).start();
         }
 
 
@@ -323,9 +367,15 @@ public class MyService extends Service
 
         Log.d("Log", "Stopping service");
 
-        mTimer.cancel();    //For Cancel Timer
-        LocationManager lm = (LocationManager) getSystemService(LOCATION_SERVICE);
-        lm.removeUpdates(ml);
+        if (mTimer != null)
+        {
+            mTimer.cancel();    //For Cancel Timer
+        }
+        if (ml != null)
+        {
+            LocationManager lm = (LocationManager) getSystemService(LOCATION_SERVICE);
+            lm.removeUpdates(ml);
+        }
 
         Toast.makeText(this, "Service is Destroyed", Toast.LENGTH_SHORT).show();
         stopForeground(true);
@@ -360,12 +410,20 @@ public class MyService extends Service
                 {
                     // display toast
                     Toast.makeText(MyService.this, "Service is running", Toast.LENGTH_SHORT).show();
-
+                    if (((NoiseMinionApplication) getApplication()).isCalibratinglow)
+                    {
+                        stopSelf();
+                    }
+                    if (((NoiseMinionApplication) getApplication()).isCalibratingmedium)
+                    {
+                        stopSelf();
+                    }
+                    if (((NoiseMinionApplication) getApplication()).isCalibratinghigh)
+                    {
+                        stopSelf();
+                    }
                 }
-
             });
         }
     }
-
-
 }

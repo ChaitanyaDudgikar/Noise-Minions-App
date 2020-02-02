@@ -15,6 +15,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -28,7 +29,7 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity
 {
-    Button b1, b2;
+    Button b1, b2,b3;
 
 
     //    String[] appPermissions = {
@@ -94,9 +95,19 @@ public class MainActivity extends AppCompatActivity
             public void onClick(View v)
             {
 
-                Intent serviceIntent = new Intent(getApplicationContext(), MyService.class);
-                startService(serviceIntent);
+                SharedPreferences pref=getSharedPreferences("Unique_User_id",MODE_PRIVATE);
+                if(pref.getFloat("basedb",-1)==-1)
+                {
+                    Toast.makeText(getApplicationContext(),"Please calibrate the device", Toast.LENGTH_LONG).show();
+                }
+                else
+                {
+                    Intent serviceIntent = new Intent(getApplicationContext(), MyService.class);
+                    startService(serviceIntent);
+                    b2.setEnabled(true);
+                    b1.setEnabled(false);
 
+                }
 
                 Intent i = new Intent(getApplicationContext(), MapsActivity.class);
                 startActivity(i);
@@ -107,6 +118,7 @@ public class MainActivity extends AppCompatActivity
             }
         });
         b2 = findViewById(R.id.stop);
+        b2.setEnabled(false);
         b2.setOnClickListener(new View.OnClickListener()
         {
             @Override
@@ -114,6 +126,22 @@ public class MainActivity extends AppCompatActivity
             {
                 Intent serviceIntent = new Intent(getApplicationContext(), MyService.class);
                 stopService(serviceIntent);
+
+                b1.setEnabled(true);
+                b2.setEnabled(false);
+            }
+        });
+        b3=findViewById(R.id.callib);
+        b3.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View view)
+            {
+//                ((NoiseMinionApplication)getApplication()).isCalibrating=true;
+//                Intent serviceIntent = new Intent(getApplicationContext(), MyService.class);
+//                startService(serviceIntent);
+                  Intent i =new Intent(getApplicationContext(),Callibration.class);
+                  startActivity(i);
             }
         });
     }

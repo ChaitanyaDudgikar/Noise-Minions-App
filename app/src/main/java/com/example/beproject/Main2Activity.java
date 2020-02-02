@@ -38,7 +38,7 @@ public class Main2Activity extends AppCompatActivity
     //ByteArrayOutputStream baos;
     Handler handler = new Handler();
     ShortBuffer shortBuffer;
-    
+
     public double Lat, Long;
     Location location;
     class MyLocationListener implements LocationListener

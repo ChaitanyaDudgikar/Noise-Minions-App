@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class Callibration extends AppCompatActivity
 {
@@ -32,6 +33,8 @@ public class Callibration extends AppCompatActivity
             @Override
             public void onClick(View view)
             {
+
+                Toast.makeText(getApplicationContext(), "Your Device is Calibrating", Toast.LENGTH_LONG).show();
                 ((NoiseMinionApplication)getApplication()).isCalibratinglow=true;
                 Intent serviceIntent = new Intent(getApplicationContext(), MyService.class);
                 startService(serviceIntent);
@@ -42,6 +45,7 @@ public class Callibration extends AppCompatActivity
             @Override
             public void onClick(View view)
             {
+                Toast.makeText(getApplicationContext(), "Your Device is Calibrating", Toast.LENGTH_LONG).show();
                 ((NoiseMinionApplication)getApplication()).isCalibratingmedium=true;
                 Intent serviceIntent = new Intent(getApplicationContext(), MyService.class);
                 startService(serviceIntent);
@@ -52,6 +56,7 @@ public class Callibration extends AppCompatActivity
             @Override
             public void onClick(View view)
             {
+                Toast.makeText(getApplicationContext(), "Your Device is Calibrating", Toast.LENGTH_LONG).show();
                 ((NoiseMinionApplication)getApplication()).isCalibratinghigh=true;
                 Intent serviceIntent = new Intent(getApplicationContext(), MyService.class);
                 startService(serviceIntent);

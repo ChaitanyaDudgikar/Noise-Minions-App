@@ -43,6 +43,7 @@ public class MyService extends Service
     ShortBuffer shortBuffer;
     public double Lat, Long;
     int callibval=0;
+    float BASE;
     Handler handler = new Handler();
     private MyLocationListener ml;
 
@@ -231,15 +232,7 @@ public class MyService extends Service
             Log.d("Log", "Recording stopped:" + audioRecording.length + " bytes read AVG=" + max + " dB=" + db);
             final double db2 = db;
             final short finalMax = max;
-            handler.post(new Runnable()
-            {
 
-                @Override
-                public void run()
-                {
-                    Toast.makeText(getApplicationContext(), "stop recording" + " AVG=" + finalMax + " dB=" + (db2-callibval), Toast.LENGTH_LONG).show();
-                }
-            });
 //                Toast.makeText(getApplicationContext(), "stop recording", Toast.LENGTH_SHORT).show();
 //            System.out.println("Uploading data");
             final String UID = "Unique_User_id";
@@ -257,6 +250,16 @@ public class MyService extends Service
                 deviceid = uuid;
             }
             Log.d("Log", "Uploading data " + deviceid + ", " + Long + ", " + Lat + ", " + db2 + ":" + (db2 -basedb));
+            BASE=basedb;
+            handler.post(new Runnable()
+            {
+
+                @Override
+                public void run()
+                {
+                    Toast.makeText(getApplicationContext(), "stop recording" + " AVG=" + finalMax + " dB=" + (db2-BASE), Toast.LENGTH_LONG).show();
+                }
+            });
             if (((NoiseMinionApplication) getApplication()).isCalibratinglow)
             {
 

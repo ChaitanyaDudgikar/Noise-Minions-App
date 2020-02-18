@@ -103,9 +103,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 if(reqno!=reqcount) return;
 
                 final List<WeightedLatLng> noiseList = new ArrayList<>();
-                //
                 final String BASE_URL = "http://13.58.40.245:8084";
-                //final String BASE_URL = "http://192.168.43.30:8084";
                 try
                 {
                     URL u = new URL(BASE_URL + "/query.htm?long_from=" + sw.longitude + "&long_to=" + ne.longitude + "&lat_from=" + sw.latitude + "&lat_to=" + ne.latitude);
@@ -134,7 +132,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         double lat = object.getDouble("latitudeNoise");
                         double lng = object.getDouble("longitudeNoise");
                         double weight = object.getDouble("noiselevel");
-                        weight = Math.pow(10, weight / 20.0);
+                        //weight = Math.pow(10, weight / 20.0);
                         noiseList.add(new WeightedLatLng(new LatLng(lat, lng), weight));
                     }
                 } catch (Exception e)
@@ -152,7 +150,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             if (noiseList != null && !noiseList.isEmpty())
                             {
                                 mProvider = new HeatmapTileProvider.Builder().weightedData(noiseList).build();
-                                mProvider.setRadius((int)Math.pow(1.3,googleMap.getCameraPosition().zoom));
+                                mProvider.setRadius((int)Math.pow(1.25,googleMap.getCameraPosition().zoom));
                                 mOverlay = googleMap.addTileOverlay(new TileOverlayOptions().tileProvider(mProvider).transparency(0.3f));
                             }
                             // Render links
@@ -161,7 +159,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         {
                             if (noiseList != null && !noiseList.isEmpty())
                             {
-                                mProvider.setRadius((int)Math.pow(1.3,googleMap.getCameraPosition().zoom));
+                                mProvider.setRadius((int)Math.pow(1.25,googleMap.getCameraPosition().zoom));
                                 mProvider.setWeightedData(noiseList);
                                 mOverlay.clearTileCache();
                             }

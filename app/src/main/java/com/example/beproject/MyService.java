@@ -34,7 +34,7 @@ import java.util.UUID;
 public class MyService extends Service
 {
 
-    public static final int notify = 300000;  //interval between two services(Here Service run every 5 Minute)
+   // public static final int notify = 300000;  //interval between two services(Here Service run every 5 Minute)
     private Handler mHandler = new Handler();   //run on another Thread to avoid crash
     private Timer mTimer = null;    //timer handling
 

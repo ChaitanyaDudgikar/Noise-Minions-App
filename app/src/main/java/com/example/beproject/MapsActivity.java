@@ -103,7 +103,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 if(reqno!=reqcount) return;
 
                 final List<WeightedLatLng> noiseList = new ArrayList<>();
-                final String BASE_URL = "http://13.58.40.245:8084";
+                final String BASE_URL = "http://18.216.171.43:8084";
                 try
                 {
                     URL u = new URL(BASE_URL + "/query.htm?long_from=" + sw.longitude + "&long_to=" + ne.longitude + "&lat_from=" + sw.latitude + "&lat_to=" + ne.latitude);
